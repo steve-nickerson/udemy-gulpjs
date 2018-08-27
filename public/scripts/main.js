@@ -1,2 +1,2 @@
 var name = 'Steve'
-console.log('Hello ' + name + '!')
+document.write('Hello ' + name + '!')
