@@ -4,9 +4,12 @@ var pump = require('pump')
 var livereload = require('gulp-livereload')
 var concat = require('gulp-concat')
 var minifyCss = require('gulp-minify-css')
-var autoprefixer = require('gulp-autoprefixer')
+// var autoprefixer = require('gulp-autoprefixer')
 var sourcemaps = require('gulp-sourcemaps')
 var sass = require('gulp-sass')
+var babel = require('gulp-babel')
+var postcss = require('gulp-postcss')
+var autoprefixer = require('autoprefixer')
 
 var DIST_PATH = 'public/dist'
 var SCRIPTS_PATH = 'public/scripts/**/*.js'
@@ -35,9 +38,12 @@ gulp.task('styles', function() {
     console.log('Starting styles...')
     pump([
         gulp.src('public/scss/styles.scss'),
-        autoprefixer({
+        postcss([autoprefixer({
             browsers: ['last 4 versions']
-        }),
+        })]),
+        // autoprefixer({
+        //     browsers: ['last 4 versions']
+        // }),
         sourcemaps.init(),
         sass({
             outputStyle: 'compressed'
@@ -53,7 +59,13 @@ gulp.task('styles', function() {
 gulp.task('scripts', function() {
     pump([
         gulp.src(SCRIPTS_PATH),
+        sourcemaps.init(),
+        babel({
+            presets: ['env']
+        }),
         uglify(),
+        concat('scripts.js'),
+        sourcemaps.write(),
         gulp.dest('public/dist'),
         livereload()        
     ], function (err) {
